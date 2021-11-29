@@ -11,7 +11,9 @@ async function activateXR() {
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(10, 15, 10);
-    scene.add(directionalLight);
+    //scene.add(directionalLight);
+    const light = new THREE.AmbientLight(0x404040,4); // soft white light
+    scene.add(light);
 
     // Set up the WebGLRenderer, which handles rendering to the session's base layer.
     const renderer = new THREE.WebGLRenderer({
@@ -25,7 +27,7 @@ async function activateXR() {
     // The API directly updates the camera matrices.
     // Disable matrix auto updates so three.js doesn't attempt
     // to handle the matrices independently.
-    const camera = new THREE.PerspectiveCamera(45, 9.0/16.0);
+    const camera = new THREE.PerspectiveCamera(45, 9.0 / 16.0);
     camera.matrixAutoUpdate = false;
 
     // Initialize a WebXR session using "immersive-ar".
@@ -266,7 +268,8 @@ async function activateXR() {
 
             // Use the view's transform matrix and projection matrix to configure the THREE.camera.
             camera.matrix.fromArray(view.transform.matrix)
-            //camera.projectionMatrix.fromArray(view.projectionMatrix);
+            camera.projectionMatrix.fromArray(view.projectionMatrix);
+            camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
             camera.updateMatrixWorld(true);
 
             const hitTestResults = frame.getHitTestResults(hitTestSource);
