@@ -219,7 +219,7 @@ async function activateXR() {
     function onSelect(event) {
         let axes = event.inputSource.gamepad.axes;
         mouse.x = axes[0];
-        mouse.y = -axes[1];
+        mouse.y = -axes[1] * 16.0 / 9.0;
 
         if (stage == 0) {
             if (main_group.visible) {
