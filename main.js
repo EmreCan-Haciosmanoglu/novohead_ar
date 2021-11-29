@@ -25,7 +25,7 @@ async function activateXR() {
     // The API directly updates the camera matrices.
     // Disable matrix auto updates so three.js doesn't attempt
     // to handle the matrices independently.
-    const camera = new THREE.PerspectiveCamera();
+    const camera = new THREE.PerspectiveCamera(45, 9.0/16.0);
     camera.matrixAutoUpdate = false;
 
     // Initialize a WebXR session using "immersive-ar".
@@ -144,28 +144,28 @@ async function activateXR() {
     scene.add(main_group);
 
     var textureID = 0;
-    function do_job(object){
-        if(object.uuid == button_to_change_texture.children[0].uuid){
+    function do_job(object) {
+        if (object.uuid == button_to_change_texture.children[0].uuid) {
             if (textureID == 0) {
-              box_lid_red.visible = false;
-              box_lid_zebra.visible = true;
-              box_lid_white.visible = false;
-              textureID = 1;
+                box_lid_red.visible = false;
+                box_lid_zebra.visible = true;
+                box_lid_white.visible = false;
+                textureID = 1;
             }
             else if (textureID == 1) {
-              box_lid_red.visible = false;
-              box_lid_zebra.visible = false;
-              box_lid_white.visible = true;
-              textureID = 2;
+                box_lid_red.visible = false;
+                box_lid_zebra.visible = false;
+                box_lid_white.visible = true;
+                textureID = 2;
             }
             else if (textureID == 2) {
-              box_lid_red.visible = true;
-              box_lid_zebra.visible = false;
-              box_lid_white.visible = false;
-              textureID = 0;
+                box_lid_red.visible = true;
+                box_lid_zebra.visible = false;
+                box_lid_white.visible = false;
+                textureID = 0;
             }
         }
-        else if(object.uuid == info_button_1.children[0].uuid){
+        else if (object.uuid == info_button_1.children[0].uuid) {
             info_1.visible = true;
             info_2.visible = false;
             info_3.visible = false;
@@ -173,7 +173,7 @@ async function activateXR() {
             info_5.visible = false;
             cross.visible = true;
         }
-        else if(object.uuid == info_button_2.children[0].uuid){
+        else if (object.uuid == info_button_2.children[0].uuid) {
             info_1.visible = false;
             info_2.visible = true;
             info_3.visible = false;
@@ -181,7 +181,7 @@ async function activateXR() {
             info_5.visible = false;
             cross.visible = true;
         }
-        else if(object.uuid == info_button_3.children[0].uuid){
+        else if (object.uuid == info_button_3.children[0].uuid) {
             info_1.visible = false;
             info_2.visible = false;
             info_3.visible = true;
@@ -189,7 +189,7 @@ async function activateXR() {
             info_5.visible = false;
             cross.visible = true;
         }
-        else if(object.uuid == info_button_4.children[0].uuid){
+        else if (object.uuid == info_button_4.children[0].uuid) {
             info_1.visible = false;
             info_2.visible = false;
             info_3.visible = false;
@@ -197,7 +197,7 @@ async function activateXR() {
             info_5.visible = false;
             cross.visible = true;
         }
-        else if(object.uuid == info_button_5.children[0].uuid){
+        else if (object.uuid == info_button_5.children[0].uuid) {
             info_1.visible = false;
             info_2.visible = false;
             info_3.visible = false;
@@ -205,7 +205,7 @@ async function activateXR() {
             info_5.visible = true;
             cross.visible = true;
         }
-        else if(object.uuid == cross.children[0].uuid){
+        else if (object.uuid == cross.children[0].uuid) {
             info_1.visible = false;
             info_2.visible = false;
             info_3.visible = false;
@@ -219,7 +219,7 @@ async function activateXR() {
     function onSelect(event) {
         let axes = event.inputSource.gamepad.axes;
         mouse.x = axes[0];
-        mouse.y = -axes[1] * 16.0 / 9.0;
+        mouse.y = -axes[1];
 
         if (stage == 0) {
             if (main_group.visible) {
@@ -232,6 +232,7 @@ async function activateXR() {
 
             // calculate objects intersecting the picking ray
             const intersects = raycaster.intersectObjects(clickables.children, true);
+            //const intersects = raycaster.intersectObject(button_to_change_texture, true);
 
             if (intersects[0]) do_job(intersects[0].object)
 
@@ -242,6 +243,7 @@ async function activateXR() {
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    var ori;
 
     // Create a render loop that allows us to draw on the AR view.
     const onXRFrame = (time, frame) => {
@@ -257,13 +259,14 @@ async function activateXR() {
         if (pose) {
             // In mobile AR, we only have one view.
             const view = pose.views[0];
+            ori = pose.transform.orientation;
 
             const viewport = session.renderState.baseLayer.getViewport(view);
             renderer.setSize(viewport.width, viewport.height)
 
             // Use the view's transform matrix and projection matrix to configure the THREE.camera.
             camera.matrix.fromArray(view.transform.matrix)
-            camera.projectionMatrix.fromArray(view.projectionMatrix);
+            //camera.projectionMatrix.fromArray(view.projectionMatrix);
             camera.updateMatrixWorld(true);
 
             const hitTestResults = frame.getHitTestResults(hitTestSource);
