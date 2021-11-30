@@ -2,10 +2,7 @@ async function activateXR() {
     const canvas = document.createElement("canvas");
     document.body.appendChild(canvas);
     const gl = canvas.getContext("webgl", { xrCompatible: true });
-    if (!gl) {
-        alert("Failure!!!")
-        return
-    }
+    if (!gl) {return }
     const renderer = new THREE.WebGLRenderer({
         alpha: true,
         preserveDrawingBuffer: true,
@@ -21,7 +18,7 @@ async function activateXR() {
     const viewerSpace = await session.requestReferenceSpace('viewer');
     const hitTestSource = await session.requestHitTestSource({ space: viewerSpace });
 
-    const camera = new THREE.PerspectiveCamera(45, 9.0 / 16.0);
+    const camera = new THREE.PerspectiveCamera();
     camera.matrixAutoUpdate = false;
 
     const scene = new THREE.Scene();
